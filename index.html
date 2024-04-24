@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; }
+        body {
+            font-family: "Lexend", "Helvetica Neue", "Helvetica", sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color:#444;
+        }
+
+        header {
+            background-color: #999;
+            color: #eee;
+            height: 10vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+        }
+
+        main {
+            background-color: #444;
+            color: #ddd;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            
+            align-items: flex-start;
+            justify-content: space-evenly;
+        }
+
+        footer {
+            background-color: #666;
+            color: #eee;
+            height: 0vh;
+        }
+
+        li {
+            display: flex;
+            flex-direction: row;
+            white-space: nowrap;
+        }
+        .form-group {
+            display: inline-block;
+        }
+        .cal {
+            border-collapse: collapse;
+            margin: 1rem;
+        }
+        .day {
+            border-right: 1px solid #0003;
+            border-bottom: 1px solid #0003;
+            height: 3rem;
+            text-align: right;
+            padding-right: 2px;
+            padding-top: 2px;
+            width: 3rem;
+            background: #fff;
+            color: #000;
+            vertical-align: top;
+        }
+        .blank {
+            border-right: 1px solid #0006;
+            border-bottom: 1px solid #0006;
+            background-color: #bbb;
+        }
+        .squiggles {
+                --s: 42px;
+    --_g: #0000 52%, #fff 54% 57%, #0000 59%;
+    background:
+        radial-gradient(farthest-side at -33.33% 50%, var(--_g)) 0 calc(var(--s)/2),
+        radial-gradient(farthest-side at 50% 133.33%, var(--_g)) calc(var(--s)/2) 0,
+        radial-gradient(farthest-side at 133.33% 50%, var(--_g)),
+        radial-gradient(farthest-side at 50% -33.33%, var(--_g)),
+        #666;
+    background-size: calc(var(--s)/4.667) var(--s), var(--s) calc(var(--s)/4.667);
+
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 400;
+        }
+        .heading {
+            background: #003d99;
+            color:#fff;
+            font-size: 1.2em;
+            padding: 0.25rem 0.5rem;
+
+        }
+        .bg2 {
+                --s: 100px;
+    --c1: #F8B195;
+    --c2: #355C7D;
+    --_g: var(--c2) 6% 14%, var(--c1) 16% 24%, var(--c2) 26% 34%, var(--c1) 36% 44%, var(--c2) 46% 54%, var(--c1) 56% 64%, var(--c2) 66% 74%, var(--c1) 76% 84%, var(--c2) 86% 94%;
+    background:
+        radial-gradient(100% 100% at 100% 0, var(--c1) 4%, var(--_g), #0008 96%, #0000),
+        radial-gradient(100% 100% at 0 100%, #0000, #0008 4%, var(--_g), var(--c1) 96%) var(--c1);
+    background-size: var(--s) var(--s);
+
+        }
+        th {
+            background: #000;
+            color: #eee;
+            font-weight: 300;
+            font-size: 10px;
+        }
+        td {
+            font-weight: 300;
+            font-size: 12px;
+            position: relative;
+        }
+        .notes {
+            text-align:left;
+            padding-top: 1rem;
+            padding-left: 3px;
+            position: absolute;
+            display: flex;
+            top: 0;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            height: 100%;
+            width; 100%;
+        }
+        #month { width: 6rem; }
+        header > form { display: flex; }
+        .form-group { margin: 0 1rem; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <header>
+        <form onsubmit="return false;">
+            <div class="form-group">
+                <label for="show">View</label>
+                <select name="show" id="show" oninput="app.makeCal()">
+                    <option value="month">Month</option>
+                    <option value="year" SELECTED>Year</option>
+                </select>
+            </div>
+
+            <div id="month-group" class="form-group">
+                <label for="show">Month</label>
+                <select name="month" id="month" oninput="app.makeCal()">
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="show">Year</label>
+                <input type="number" value="2024" id="year" name="year" oninput="app.makeCal()">
+            </div>
+            <button onclick="app.makeCal();return false;">View Calendar</button>
+        </form>
+    </header>
+<main>
+
+</main>
+<script>
+(function() {
+    const $ = str => document.querySelector(str);
+    const $$ = str => document.querySelectorAll(str);
+
+    const app = {
+        notes: {
+        },
+        data: {
+            months: ['January','February','March','April','May','June','July','August','September','October','November','December']
+        },
+        state: {
+            curcal: 'cdrcal',
+            loaded: false
+        },
+        init() {
+            app.initForm();
+            app.loadNotes(app.state.curcal);
+            app.makeCal();
+            app.state.loaded = true;
+        },
+        initForm() {
+            for (let i=0; i<app.data.months.length; i++) {
+                let month = app.data.months[i];
+                console.log(`month ${i} / ${month}`);
+                let opt = document.createElement("option");
+                opt.text = month;
+                opt.setAttribute('value', i);
+                $("#month").appendChild(opt);
+            }
+        },
+        makeCal() {
+            let month = $("#month").selectedIndex;
+            let year = $("#year").value;
+            let type = $("#show").value;
+            let out = "";
+
+            switch (type) {
+                case "month":
+                    $("#month-group").style.display = 'flex';
+
+                    out = app.renderMonth(month, year);
+                    break;
+                case "year":
+                    $("#month-group").style.display = 'none';
+                    out = app.renderYear(year);
+                    break;
+                case "week":
+                    out = app.renderWeek(month, year);
+                    break;
+                default:
+            }
+            $("main").innerHTML = out;
+        },
+        loadNotes(cal='cdrcal') {
+            const json = localStorage.getItem(cal);
+            app.state.curcal = cal;
+            if (json) {
+                app.notes = JSON.parse(json);
+                console.log("Loaded notes from local store.");
+                console.dir(app.notes);
+            }
+            return app.notes;
+        },
+        saveNote(note, evt) {
+            const tgt = evt.target;
+            const tgtdate = tgt.closest("td").dataset.date.replace(/\D/g, '');
+
+            app.notes[`date_${tgtdate}`] = note;
+            localStorage.setItem(app.state.curcal, JSON.stringify(app.notes));
+
+        },
+        renderMonth(month, year) {
+            const start = new Date(year, month, 1);
+            const end = new Date(year, parseInt(month) + 1, 0);
+            
+            console.log(`start date: ${start.toISOString()}`);
+            console.log(`end date: ${end.toISOString()}`);
+
+            let out = `<table class='cal' id='cal-${year}-${month+1}'><thead><tr><th class="heading" colspan="4" style="text-align:left"><h1>${app.data.months[month]}</h1></th><th class="heading" colspan="3" style="text-align:right"><h1>${year}</h1></th></tr><tr> <th>Sun</th> <th>Mon</th> <th>Tue</th> <th>Wed</th> <th>Thu</th> <th>Fri</th> <th>Sat</th> </tr> </thead> <tbody>`;
+            
+            let startday = start.getDay();
+            
+            out += `<tr>`;
+            for (let i=0; i<startday; i++) {
+                out += `<td class='blank'>&nbsp;</td>`;
+            }
+
+            for (let d=1; d<end.getDate()+1; d++) {
+                let today = new Date(year, month, d);
+                let curnote = "";
+                if (app.notes[`date_${year}${month}${d}`]) {
+                    curnote = app.notes[`date_${year}${month}${d}`]; 
+                }
+                out += `<td class='day' data-date='${year}-${month}-${d}' data-time='${today.getTime()}'>${d}<div id='date_${year}${month}${d}' class='notes' oninput="app.saveNote(this.innerHTML, event)" contenteditable>${curnote}</div></td>`;
+                if (today.getDay() === 6) {
+                    out += `</tr><tr>`;
+                }
+            }
+
+            for (let p=end.getDay() + 1; p<7; p++) {
+                out += `<td class='blank'>&nbsp;</td>`;
+            }
+            
+            out += "</tr></tbody></table>";
+
+            return out;
+            
+        },
+        renderYear(year) {
+            let out = [];
+            for (let m=0; m<12; m++) {
+                out.push(app.renderMonth(m, year));
+            }
+            console.dir(out);
+            return out.join("\n");
+        },
+        fetch(url, callback) {
+            fetch(url).then(response=>response.json()).then(data=>{
+                app.data = data;
+                app.state.loaded = true;
+                if (callback && typeof(callback) === "function") {
+                    callback(data);
+                }
+            });
+        },
+        display(data, tgt) {
+            let out = "<table><thead><tr>";
+            const keys = Object.keys(data[0]);
+            if (keys) {
+                keys.forEach(key => {
+                    out += `<th>${key}</th>`;
+                });
+            }
+            out += "</tr></thead><tbody>";
+            data.forEach(item=>{
+                out += `<tr>`;
+                keys.forEach(key => {
+                    out += `<td>${item[i]}</td>`;
+                });
+                out += `</tr>`;
+            });
+            out += "</tbody></table>";
+
+            if (tgt) {
+                tgt.innerHTML = out;
+            }
+            return out;
+        }
+    }
+    window.app = app;
+    app.init();
+})();
+</script>
+</body>
+
+</html>
