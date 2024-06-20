@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <title></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -18,18 +17,24 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             background-color:#444;
+            height:100vh;
         }
 
-        header {
+        header.top {
             background-color: #999;
             color: #eee;
-            height: 10vh;
+            height: 3rem;
+            padding: 1rem 2rem;
             display: flex;
+            width: 100%;
             align-items: center;
             justify-content: center;
-            width: 100vw;
+            position: sticky;
+            top: 0;
+            z-index: 99999;
+            box-shadow:0px 2px 2px #0004;
+            border-top: 2px solid #fff6;
         }
 
         main {
@@ -38,7 +43,6 @@
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
-            
             align-items: flex-start;
             justify-content: space-evenly;
         }
@@ -54,29 +58,47 @@
             flex-direction: row;
             white-space: nowrap;
         }
+        .cal-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
         .form-group {
             display: inline-block;
         }
         .cal {
-            border-collapse: collapse;
             margin: 1rem;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            transition: all 250ms linear;
+        }
+        .cal header {
+            display: flex;
+            justify-content: space-between;
         }
         .day {
             border-right: 1px solid #0003;
             border-bottom: 1px solid #0003;
-            height: 3rem;
             text-align: right;
             padding-right: 2px;
             padding-top: 2px;
-            width: 3rem;
             background: #fff;
             color: #000;
             vertical-align: top;
+            position: relative;
+            font-size: 10px;
+            width: 3rem;
+            height: 3rem;
         }
         .blank {
             border-right: 1px solid #0006;
             border-bottom: 1px solid #0006;
-            background-color: #bbb;
+            background-color: #ccc;
+            color: #999;
+            text-align: right;
+            font-size: 10px;
+            padding-right: 2px;
+            padding-top: 2px;
         }
         .squiggles {
                 --s: 42px;
@@ -95,11 +117,10 @@
             font-weight: 400;
         }
         .heading {
-            background: #003d99;
             color:#fff;
             font-size: 1.2em;
             padding: 0.25rem 0.5rem;
-
+            text-shadow: 1px 1px 0px #0009;
         }
         .bg2 {
                 --s: 100px;
@@ -125,7 +146,6 @@
         }
         .notes {
             text-align:left;
-            padding-top: 1rem;
             padding-left: 3px;
             position: absolute;
             display: flex;
@@ -139,12 +159,77 @@
         #month { width: 6rem; }
         header > form { display: flex; }
         .form-group { margin: 0 1rem; }
+        .month-view table.cal {
+            width: 97vw;
+            height: 90vh;
+        }
+        .month-view table.cal td {
+            width: auto;
+        }
+        .month-view table.cal th {
+            width: auto;
+            font-size: 1rem;
+        }
+        .zoom {
+            width: 100%;
+            height: 90vh;
+            height: -webkit-fill-available;
+            position: absolute;
+            z-index: 9999;
+            top: 3rem;
+            left: 0px;
+            margin:0;
+            padding:0;
+            display: grid;
+            grid-template-rows: 3rem 1.5rem repeat(6, 1fr);
+        }
+        .zoom .day {
+            height: auto;
+            width: auto;
+        }
+
+        @keyframes marquee {
+            0% {  transform: translateX( 25%); }
+            100% { transform: translateX( -125%); }
+        }
+        .notes {
+            position: relative;
+            white-space: nowrap;
+            width: fit-content;
+        }
+        .day {
+            transition: all 200ms linear;
+            overflow: hidden;
+        }
+        .day:hover {
+            transform: scale(1.5);
+            z-index: 9999;
+            box-shadow: 1px 3px 3px #0005;
+            border: 1px solid #0006;
+            font-size: 7px;
+        }
+        .cal-days {
+            background: #000;
+            color: #fff;
+            text-align: center;
+        }
+        .day:hover .notes {
+            animation: marquee 10s linear infinite forwards;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
-    <header>
+    <header class="top">
         <form onsubmit="return false;">
+            <div class="form-group">
+                <label for="show">Calendar</label>
+                <select name="cal" id="cal" oninput="app.switchCal()">
+                    <option value="cdrcal" SELECTED>Default</option>
+                    <option value="newcal">- Create New Calendar -</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="show">View</label>
                 <select name="show" id="show" oninput="app.makeCal()">
@@ -178,7 +263,8 @@
         notes: {
         },
         data: {
-            months: ['January','February','March','April','May','June','July','August','September','October','November','December']
+            months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+            colors: ['#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#a6981b', '#957207', '#d04418', '#795548', '#607d8b']
         },
         state: {
             curcal: 'cdrcal',
@@ -189,6 +275,18 @@
             app.loadNotes(app.state.curcal);
             app.makeCal();
             app.state.loaded = true;
+            document.addEventListener("keydown", app.keyDown);
+        },
+        keyDown(evt) {
+            console.log("keyDown");
+            console.dir(evt);
+
+            switch (evt.keyCode) {
+                case 27:
+                    $(".zoom").classList.remove("zoom");
+                    break;
+                default:
+            }
         },
         initForm() {
             for (let i=0; i<app.data.months.length; i++) {
@@ -199,6 +297,57 @@
                 opt.setAttribute('value', i);
                 $("#month").appendChild(opt);
             }
+            app.data.cals = JSON.parse(localStorage.getItem("cdrcals"));
+            if (!app.data.cals) {
+                app.data.cals = ['cdrcal'];
+                localStorage.setItem("cdrcals", JSON.stringify(app.data.cals));
+            }
+            $("#cal").innerHTML = "";
+            for (const calname of app.data.cals) {
+                let opt = document.createElement("option");
+                opt.text = calname;
+                opt.setAttribute("value", calname);
+                $("#cal").append(opt);
+            }
+            let opt = document.createElement("option");
+            opt.text = "- Create New Calendar -";
+            opt.setAttribute("value", "newcal");
+            $("#cal").append(opt);
+        },
+        switchCal() {
+            app.saveCurrentCal();
+            const newcal = $("#cal").value;
+
+            if (newcal === "newcal") {
+                let calname = prompt("New calendar name?");
+                if (calname) {
+                    app.state.curcal = calname;
+                    app.notes = {};
+                    localStorage.setItem(calname, JSON.stringify(app.notes));
+                    let opt = document.createElement("option");
+                    opt.text = calname;
+                    opt.setAttribute("value", calname);
+                    $("#cal").insertBefore(opt, $("option[value='newcal']"));
+                    app.data.cals.push(calname);
+                    localStorage.setItem("cdrcals", JSON.stringify(app.data.cals));
+                    setTimeout(function() { $(`option[value='${calname}']`).setAttribute("selected", true);}, 10);
+                    app.loadCalendar(calname);
+                }
+            } else {
+                app.state.curcal = newcal;
+                app.loadCalendar(newcal);
+            }
+        },
+        saveCurrentCal() {
+            localStorage.setItem(app.state.curcal, JSON.stringify(app.notes));
+        },
+        loadCalendar(calname) {
+            let json = localStorage.getItem(calname);
+            if (json) {
+                app.notes = JSON.parse(json);
+                app.state.curcal = calname;
+            }
+            app.makeCal();
         },
         makeCal() {
             let month = $("#month").selectedIndex;
@@ -208,11 +357,13 @@
 
             switch (type) {
                 case "month":
+                    $("main").classList.add("month-view");
                     $("#month-group").style.display = 'flex';
 
                     out = app.renderMonth(month, year);
                     break;
                 case "year":
+                    $("main").classList.remove("month-view");
                     $("#month-group").style.display = 'none';
                     out = app.renderYear(year);
                     break;
@@ -233,13 +384,15 @@
             }
             return app.notes;
         },
+        focusMonth(el) {
+            el.classList.toggle("zoom");
+        },
         saveNote(note, evt) {
             const tgt = evt.target;
             const tgtdate = tgt.closest("td").dataset.date.replace(/\D/g, '');
 
             app.notes[`date_${tgtdate}`] = note;
-            localStorage.setItem(app.state.curcal, JSON.stringify(app.notes));
-
+            app.saveCurrentCal();
         },
         renderMonth(month, year) {
             const start = new Date(year, month, 1);
@@ -248,13 +401,27 @@
             console.log(`start date: ${start.toISOString()}`);
             console.log(`end date: ${end.toISOString()}`);
 
-            let out = `<table class='cal' id='cal-${year}-${month+1}'><thead><tr><th class="heading" colspan="4" style="text-align:left"><h1>${app.data.months[month]}</h1></th><th class="heading" colspan="3" style="text-align:right"><h1>${year}</h1></th></tr><tr> <th>Sun</th> <th>Mon</th> <th>Tue</th> <th>Wed</th> <th>Thu</th> <th>Fri</th> <th>Sat</th> </tr> </thead> <tbody>`;
+            let out = `<div class='cal' id='cal-${year}-${month+1}'>
+				<header style="background-color:${app.data.colors[month]};color:#fff" onclick="app.focusMonth(this.closest('.cal'))">
+                    <div class="heading" style="text-align:left">
+                        <h1>${app.data.months[month]}</h1>
+                    </div>
+                    <div class="heading" style="text-align:right">
+                        <h1>${year}</h1>
+                    </div>
+				</header>
+				<div class="cal-days cal-row"> 
+                    <div>Sun</div> <div>Mon</div> <div>Tue</div> <div>Wed</div> <div>Thu</div> <div>Fri</div> <div>Sat</div> 
+                </div> 
+            <div class="cal-row">`;
             
             let startday = start.getDay();
             
             out += `<tr>`;
-            for (let i=0; i<startday; i++) {
-                out += `<td class='blank'>&nbsp;</td>`;
+            for (let i=startday; i>0; i--) {
+                let yester = new Date(start.getTime() - (i * 86400000) );
+
+                out += `<div class='cal-cell blank'>${yester.getDate()}</div>`;
             }
 
             for (let d=1; d<end.getDate()+1; d++) {
@@ -263,17 +430,17 @@
                 if (app.notes[`date_${year}${month}${d}`]) {
                     curnote = app.notes[`date_${year}${month}${d}`]; 
                 }
-                out += `<td class='day' data-date='${year}-${month}-${d}' data-time='${today.getTime()}'>${d}<div id='date_${year}${month}${d}' class='notes' oninput="app.saveNote(this.innerHTML, event)" contenteditable>${curnote}</div></td>`;
+                out += `<div class='cal-cell day' data-date='${year}-${month}-${d}' data-time='${today.getTime()}'>${d}<div id='date_${year}${month}${d}' class='notes' oninput="app.saveNote(this.innerHTML, event)" contenteditable>${curnote}</div></div>`;
                 if (today.getDay() === 6) {
-                    out += `</tr><tr>`;
+                    out += `</div><div class="cal-row">`;
                 }
             }
 
             for (let p=end.getDay() + 1; p<7; p++) {
-                out += `<td class='blank'>&nbsp;</td>`;
+                out += `<div class='cal-cell blank'>&nbsp;</div>`;
             }
             
-            out += "</tr></tbody></table>";
+            out += "</div></div></div>";
 
             return out;
             
